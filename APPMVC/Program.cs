@@ -93,11 +93,7 @@ builder.Services.AddTransient<GiaoHangNhanhService>(provider =>
 var app = builder.Build();
 
 
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "TempFiles")),
-    RequestPath = "/TempFiles"
-});
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
