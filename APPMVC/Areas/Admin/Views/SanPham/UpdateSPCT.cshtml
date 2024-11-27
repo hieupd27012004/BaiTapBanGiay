@@ -1,0 +1,98 @@
+﻿@model AppData.ViewModel.SanPhamChiTietItemViewModel
+@{
+    ViewData["Title"] = "Cập Nhật Chi Tiết Sản Phẩm";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="mb-4">Cập Nhật Chi Tiết Sản Phẩm</h2>
+
+<form asp-action="UpdateSPCT" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="IdSanPhamChiTiet" />
+    <div class="row mb-3">
+        <div class="col-md-12">
+@*             <div class="form-group">
+                <label>ID Sản Phẩm:</label>
+                <span class="form-control-plaintext">@Model.IdSanPhamChiTiet</span>
+            </div> *@
+            <div class="form-row align-items-center mb-3">
+                <div class="form-group col-md-6">
+                    <label>Màu sắc:</label>
+                    <input type="hidden" asp-for="MauSac" value="@string.Join(",", Model.MauSac ?? new List<string>())" />
+                    <input type="text" value="@string.Join(", ", Model.MauSac ?? new List<string>())" class="form-control" readonly />
+                </div>
+
+                <div class="form-group col-md-6">
+                    <label>Kích cỡ:</label>
+                    <input type="hidden" asp-for="KichCo" value="@string.Join(",", Model.KichCo ?? new List<string>())" />
+                    <input type="text" value="@string.Join(", ", Model.KichCo ?? new List<string>())" class="form-control" readonly />
+                </div>
+            </div>
+            <div class="form-group col-md-6">
+                <label>Giá:</label>
+                <input type="number" asp-for="Gia" class="form-control" step="0.01" required />
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Số lượng:</label>
+                <input type="number" asp-for="SoLuong" class="form-control" required />
+            </div>
+
+            <div class="form-group col-md-6">
+                <label>Xuất xứ:</label>
+                <input type="text" asp-for="XuatXu" class="form-control" required />
+            </div>
+
+            <div class="form-group">
+                <label>Hình ảnh:</label>
+                <div id="imageContainer" class="mb-2" style="display: flex; flex-wrap: wrap;">
+                    @if (Model.HinhAnhs != null && Model.HinhAnhs.Any())
+                    {
+                        foreach (var hinhAnh in Model.HinhAnhs)
+                        {
+                            var base64String = Convert.ToBase64String(hinhAnh.DataHinhAnh);
+                            var imageUrl = $"data:{hinhAnh.LoaiFileHinhAnh};base64,{base64String}";
+                            <img src="@imageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail" style="max-width: 200px; max-height: 200px; margin: 5px;" />
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có hình ảnh cho sản phẩm này.</span>
+                    }
+                </div>
+                <input type="file" name="Files" multiple class="form-control-file" onchange="previewImages(event)" />
+                <small id="fileHelp" class="form-text text-muted">Chỉ được chọn tối đa 3 ảnh.</small>
+            </div>
+            <br />
+            <button type="submit" class="btn btn-primary">Cập nhật</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    function previewImages(event) {
+        const imageContainer = document.getElementById('imageContainer');
+        imageContainer.innerHTML = ''; // Clear existing images
+
+        const files = event.target.files;
+        if (files.length > 3) {
+            alert("Bạn chỉ được chọn tối đa 3 ảnh.");
+            event.target.value = ""; // Clear the input
+            return;
+        }
+
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'img-thumbnail';
+                img.style.maxWidth = '200px';
+                img.style.maxHeight = '200px';
+                img.style.margin = '5px';
+                imageContainer.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>

@@ -1,0 +1,113 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="author" content="Untree.co">
+    <link rel="shortcut icon" href="favicon.png">
+
+    <meta name="description" content="" />
+    <meta name="keywords" content="bootstrap, bootstrap4" />
+
+    <!-- Bootstrap CSS -->
+    <link href="~/Client/css/bootstrap.min.css" rel="stylesheet">
+    <link href="~/Client/css/tiny-slider.css" rel="stylesheet">
+    <link href="~/Client/css/style.css" rel="stylesheet">
+    <style>
+        .menu-inner {
+            list-style: none; /* Bỏ dấu chấm ở đầu mỗi mục menu */
+            padding: 0; /* Bỏ padding mặc định */
+            margin: 0; /* Bỏ margin mặc định */
+        }
+
+        .menu-item {
+            overflow: hidden; /* Đảm bảo không bị tràn ra ngoài */
+        }
+
+        .menu-link {
+            display: flex; /* Sử dụng flexbox để căn chỉnh icon và văn bản */
+            align-items: center; /* Căn giữa theo chiều dọc */
+            text-decoration: none; /* Bỏ gạch chân */
+            color: black; /* Màu chữ */
+            padding: 10px; /* Khoảng cách bên trong cho mục menu */
+            white-space: nowrap; /* Ngăn văn bản xuống dòng */
+        }
+
+            .menu-link:hover {
+                background-color: #e0e0e0; /* Màu nền khi hover */
+            }
+        .nav-link i {
+            font-size: 20px; /* Tăng kích thước icon để dễ thấy */
+            color: black; /* Đặt màu sắc cho icon */
+        }
+
+        .layout-container {
+            display: flex; /* Sử dụng Flexbox để tạo bố cục bên trái và bên phải */
+            background-color: #d3d3d3; /* Màu xám cho layout container */
+        }
+
+        .menu-left {
+            width: 250px; /* Độ rộng cho menu bên trái */
+            background-color: #a9a9a9; /* Màu xám cho menu */
+            padding: 20px; /* Khoảng cách bên trong */
+        }
+
+        .content {
+            flex-grow: 1; /* Nội dung chiếm không gian còn lại */
+            padding: 20px; /* Khoảng cách bên trong */
+            background-color: #d3d3d3; /* Màu xám cho nội dung */
+        }
+    </style>
+</head>
+<body>
+    @Html.Partial("_Nav")
+    <div class="layout-container">
+        <!-- Menu bên trái -->
+        <aside class="menu-left">
+            <ul class="menu-inner py-1">
+                <li class="menu-header small text-uppercase">
+                    <span class="menu-header-text">Tài khoản</span>
+                </li>
+
+                <li class="menu-item">
+                    <a href="@Url.Action("ThongTinKhachHang", "KhachHang", new { area = "Client" })" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user"></i>
+                        <div data-i18n="Account">Thông tin tài khoản</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="@Url.Action("Getall", "DiaChi", new { area = "Client" })" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-map"></i>
+                        <div data-i18n="Address">Địa chỉ</div>
+                    </a>
+                </li>
+
+                <li class="menu-item">
+                    <a href="@Url.Action("ChangePassword", "KhachHang", new { area = "Client" })" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-lock"></i>
+                        <div data-i18n="Change Password">Đổi mật khẩu</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="@Url.Action("Index", "HoaDon", new { area = "Client" })" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-map"></i>
+                        <div data-i18n="Order">Đơn Hàng</div>
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Nội dung bên phải -->
+        <div class="content">
+            @RenderBody()
+        </div>
+    </div>
+
+    <script src="~/Client/js/bootstrap.bundle.min.js"></script>
+    <script src="~/Client/js/tiny-slider.js"></script>
+    <script src="~/Client/js/custom.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,150 @@
+﻿@model AppData.ViewModel.ThanhToanViewModel
+@{
+    ViewData["Title"] = "Checkout";
+    Layout = "~/Areas/Client/Views/Shared/_LayoutClient.cshtml";
+}
+<style>
+    .custom-control-inline {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 1rem;
+    }
+
+    .custom-control-label {
+        display: inline-flex;
+        align-items: center;
+        font-weight: normal;
+        cursor: pointer;
+    }
+
+    .custom-control-label i {
+        font-size: 1.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .custom-control-input:checked ~ .custom-control-label {
+        color: #007bff;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h2 class="my-4">Thông tin giao hàng</h2>
+            <form asp-action="ProcessCheckout" method="post">
+                <div class="form-group">
+                    <label for="Dia_chi_12">Họ và tên</label>
+                    <input type="text" class="form-control" id="Dia_chi_12" name="NguoiNhan" value="@Model.NguoiNhan" required />
+                </div>
+                <div class="form-group">
+                    <label for="so_dien_thoai">Số điện thoại</label>
+                    <input type="tel" class="form-control" id="so_dien_thoai" name="SoDienThoaiNguoiNhan" value="@Model.SoDienThoai" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="province">Tỉnh/Thành phố</label>
+                    <input type="text" class="form-control" id="province" name="ProvinceName" value="@Model.ProvinceName" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="district">Quận/Huyện</label>
+                    <input type="text" class="form-control" id="district" name="DistrictName" value="@Model.DistrictName" readonly />
+                </div>
+                <div class="form-group">
+                    <label for="ward">Phường/Xã</label>
+                    <input type="text" class="form-control" id="ward" name="WardName" value="@Model.WardName" readonly />
+                </div>
+
+                <h4 class="my-3">Phương thức thanh toán</h4>
+                <div class="form-group">
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="thanh_toan_khi_nhan_hang" name="PaymentMethod" value="cash_on_delivery" class="custom-control-input"
+                        @(Model.PaymentMethod == "cash_on_delivery" ? "checked" : "")>
+                        <label class="custom-control-label" for="thanh_toan_khi_nhan_hang">
+                            <i class="fas fa-money-bill-alt"></i>
+                            Thanh toán khi nhận hàng
+                        </label>
+                    </div>
+                    <div class="custom-control custom-radio custom-control-inline">
+                        <input type="radio" id="thanh_toan_ngay" name="PaymentMethod" value="online_payment" class="custom-control-input"
+                        @(Model.PaymentMethod == "online_payment" ? "checked" : "")>
+                        <label class="custom-control-label" for="thanh_toan_ngay">
+                            <i class="fab fa-cc-visa"></i>
+                            Thanh toán ngay
+                        </label>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Hoàn thành đặt hàng</button>
+            </form>
+        </div>
+
+        <div class="col-md-4">
+            <h2 class="my-4">Đơn hàng</h2>
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="my-3">Thông tin đơn hàng</h4>
+                    @if (Model.CartItems != null && Model.CartItems.Any())
+                    {
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Giá</th>
+                                    <th hidden>ID Sản phẩm Chi tiết</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.CartItems)
+                                {
+                                    <tr>
+                                        <td>@item.ProductName</td>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Price.ToString("C")</td>
+                                        <td hidden>@item.IdSanPhamChiTiet</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div class="form-group">
+
+                            <div class="form-group">
+                                <label for="tong_so_tien">Tổng số tiền</label>
+                                <input type="text" class="form-control" id="tong_so_tien"
+                                       value="@(Model.CartItems.Sum(i => i.Price * i.Quantity))" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phi_van_chuyen">Phí vận chuyển</label>
+                                <input type="text" class="form-control" id="phi_van_chuyen"
+                                       value="@(Model.PhiVanChuyen)" readonly />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="tong_tien">Tổng tiền hóa đơn</label>
+                                <input type="text" class="form-control" id="tong_tien"
+                                       value="@(Model.CartItems.Sum(i => i.Price * i.Quantity) + Model.PhiVanChuyen)" readonly />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p>Giỏ hàng của bạn hiện đang trống.</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const formatCurrency = (value) => {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+        };
+
+        document.getElementById('tong_so_tien').value = formatCurrency(parseFloat(document.getElementById('tong_so_tien').value));
+        document.getElementById('phi_van_chuyen').value = formatCurrency(parseFloat(document.getElementById('phi_van_chuyen').value));
+        document.getElementById('tong_tien').value = formatCurrency(parseFloat(document.getElementById('tong_tien').value));
+    });
+</script>

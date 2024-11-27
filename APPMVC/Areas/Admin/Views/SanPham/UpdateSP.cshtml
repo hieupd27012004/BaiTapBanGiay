@@ -1,0 +1,53 @@
+﻿@model AppData.ViewModel.SanPhamChiTietViewModel
+@{
+    ViewData["Title"] = "UpdateSP";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Chỉnh sửa sản phẩm</h2>
+
+<form asp-action="UpdateSP" method="post" enctype="multipart/form-data">
+    <input type="hidden" asp-for="IdSanPham" />
+
+    <div class="form-group">
+        <label asp-for="TenSanPham"></label>
+        <input asp-for="TenSanPham" class="form-control" />
+        <span asp-validation-for="TenSanPham" class="text-danger"></span>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col">
+            <label asp -for="ChatLieuId" class="control-label">Chất liệu</label>
+            <select asp-for="ChatLieuId" class="form-control" asp-items="ViewBag.IdChatLieu"></select>
+            <span asp-validation-for="ChatLieuId" class="text-danger"></span>
+        </div>
+        <div class="col">
+            <label asp-for="DeGiayId" class="control-label">Đế giày</label>
+            <select asp-for="DeGiayId" class="form-control" asp-items="@(ViewBag.IdDeGiay)"></select>
+            <span asp-validation-for="DeGiayId" class="text-danger"></span>
+        </div>
+        <div class="col">
+            <label asp-for="DanhMucId" class="control-label">Danh mục</label>
+            <select asp-for="DanhMucId" class="form-control" asp-items="@(ViewBag.IdDanhMuc)"></select>
+            <span asp-validation-for="DanhMucId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col">
+            <label asp-for="ThuongHieuId" class="control-label">Thương hiệu</label>
+            <select asp-for="ThuongHieuId" class="form-control" asp-items="ViewBag.IdThuongHieu"></select>
+            <span asp-validation-for="ThuongHieuId" class="text-danger"></span>
+        </div>
+        <div class="col">
+            <label asp-for="KieuDangId" class="control-label">Kiểu dáng</label>
+            <select asp-for="KieuDangId" class="form-control" asp-items="@(ViewBag.IdKieuDang)"></select>
+            <span asp-validation-for="KieuDangId" class="text-danger"></span>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Cập nhật sản phẩm</button>
+        <a href="@Url.Action("Edit", "SanPham", new { area = "Admin", id = Model.IdSanPham })" class="btn btn-secondary" style="margin-left: 10px;">Hủy</a>
+    </div>
+</form>

@@ -1,0 +1,119 @@
+﻿@model List<APPMVC.ViewModel.SanPhamClientViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Client/Views/Shared/_Sanpham.cshtml";
+}
+<style>
+    .product-card {
+        background-color: #fff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+        overflow: hidden;
+        transition: transform 0.3s ease;
+    }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .product-image {
+        position: relative;
+    }
+
+    .product-colors {
+        display: flex;
+        justify-content: center; /* Can be adjusted to 'flex-start' for left alignment */
+        margin-bottom: 10px; /* Add margin to separate from title */
+    }
+
+    .color-item {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        margin: 0 5px;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+    }
+
+        .color-item:hover {
+            transform: scale(1.2);
+        }
+
+    .product-info {
+        padding: 20px;
+        text-align: center;
+    }
+
+    .product-title {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .product-price {
+        font-size: 16px;
+        color: #007bff;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container">
+    <div class="row">
+        @foreach (var sanPham in Model)
+        {
+            <div class="col-12 col-md-4 col-lg-3 mb-5">
+                <div class="product-card">
+                    <div class="product-image">
+                        <img id="mainImage_@sanPham.IdSanPham"
+                             src="@(sanPham.RepresentativeImage != null ? $"data:image;base64,{Convert.ToBase64String(sanPham.RepresentativeImage)}" : "/images/default-product.jpg")"
+                             class="img-fluid"
+                             alt="@sanPham.TenSanPham"
+                             data-original-image="@(sanPham.RepresentativeImage != null ? $"data:image;base64,{Convert.ToBase64String(sanPham.RepresentativeImage)}" : "/images/default-product.jpg")" />
+                    </div>
+                    <div class="product-info">
+                        <div class="product-colors mb-2">
+                            @foreach (var colorImage in sanPham.ColorImages)
+                            {
+                                <div class="color-item"
+                                     style="background-image: url('data:image;base64,@Convert.ToBase64String(colorImage.AnhDaiDien)');"
+                                     data-main-image="@Convert.ToBase64String(colorImage.AnhDaiDien)">
+                                </div>
+                            }
+                        </div>
+                        <h3 class="product-title">@sanPham.TenSanPham</h3>
+                        <p class="product-price">
+                            @(sanPham.GiaThapNhat?.ToString("N0") ?? "N/A") -
+                            @(sanPham.GiaCaoNhat?.ToString("N0") ?? "N/A") VND
+                        </p>
+                        <a href="@Url.Action("Detail", "SanPham", new { sanphamId = sanPham.IdSanPham })"
+                           class="btn btn-primary">Xem chi tiết</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const productCards = document.querySelectorAll('.product-card');
+
+        productCards.forEach(card => {
+            const mainImage = card.querySelector('img[data-original-image]');
+            const colorItems = card.querySelectorAll('.color-item');
+
+            colorItems.forEach(colorItem => {
+                colorItem.addEventListener('click', function () {
+                    mainImage.src = 'data:image;base64,' + this.getAttribute('data-main-image');
+                    });
+                });
+
+                card.addEventListener('mouseleave', function () {
+                const originalImage = mainImage.getAttribute('data-original-image');
+                mainImage.src = originalImage;
+                });
+            });
+        });
+</script>

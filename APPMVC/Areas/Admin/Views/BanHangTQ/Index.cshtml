@@ -1,0 +1,201 @@
+﻿@model IEnumerable<AppData.ViewModel.HoaDonChiTietViewModel>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .container-xxl {
+        max-width: 1320px;
+    }
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .product-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-gap: 20px;
+    }
+    .product-item {
+        padding: 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+    .product-item:hover {
+        background-color: #e6e6e6;
+    }
+    .product-item h6 {
+        margin-top: 0;
+        margin-bottom: 0;
+        display: inline-block;
+        margin-right: 10px;
+    }
+    .delete-icon {
+        color: #ff6b6b;
+        cursor: pointer;
+    }
+</style>
+
+<div class="container-xxl flex-grow-1 container-p-y">
+    <h4 class="fw-bold py-3 mb-4">
+        <span class="text-muted fw-light">Bán Hàng Tại Quầy</span>
+    </h4>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mb-4" style="padding: 20px">
+                <div class="header">
+                    <h2>Bán hàng</h2>
+                    <form action="@Url.Action("TaoHD", "BanHangTQ", new { area = "Admin" })" method="post" class="d-inline">
+                        <button type="submit" class="btn btn-primary ms-2">+ Tạo Đơn Hàng</button>
+                    </form>
+                </div>
+                <div class="product-list">
+                    @if (Model == null || !Model.Any())
+                    {
+                        <p>Không có đơn hàng nào để hiển thị.</p>
+                    }
+                    else
+                    {
+                        var sortedInvoices = Model.OrderBy(invoice => int.Parse(invoice.HoaDon.MaDon.Substring(2))).ToList();
+
+                        int count = 1;
+                        foreach (var invoice in sortedInvoices)
+                        {
+                            <div class="product-item" data-idhoadon="@invoice.IdHoaDon" onclick="viewInvoiceDetail(this)">
+                                <h6>Đơn hàng @count - @invoice.HoaDon.MaDon</h6>
+                                <i class="fas fa-trash delete-icon" title="Xóa" onclick="event.stopPropagation(); deleteInvoice('@invoice.IdHoaDon')"></i>
+                            </div>
+                            count++;
+                        }
+
+                        <script>
+                            $(document).ready(function() {
+                                var firstInvoiceItem = $('.product-item').first();
+                                if (firstInvoiceItem.length) {
+                                    viewInvoiceDetail(firstInvoiceItem[0]); // Pass the DOM element
+                                }
+                            });
+                        </script>
+                    }
+                </div>
+
+                <div id="invoiceDetailsContainer" data-idhoadon="">
+                    <!-- Details will be populated here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script>
+        function viewInvoiceDetail(element) {
+            const idHoaDon = $(element).data('idhoadon'); 
+            console.log("Fetching details for IdHoaDon:", idHoaDon);
+            $.get('@Url.Action("Edit", "BanHangTQ", new { area = "Admin" })', { id: idHoaDon })
+                .done(function(data) {
+                    $('#invoiceDetailsContainer').html(data);
+                    console.log("Setting IdHoaDon in container:", idHoaDon);
+                    loadSanPhamChiTiet(idHoaDon);
+                })
+                .fail(function() {
+                    alert("Không thể tải chi tiết hóa đơn.");
+                });
+        }
+
+        function loadSanPhamChiTiet(idHoaDon) {
+            console.log("Loading product details for IdHoaDon:", idHoaDon);
+            $.get('@Url.Action("GetSanPhamChiTietList", "BanHangTQ", new { area = "Admin" })', { idHoaDon: idHoaDon })
+                .done(function(data) {
+                    $('#productDetailList').html(data);
+                    console.log("Product details loaded successfully.");
+                    bindQuantityButtons(idHoaDon); // Pass IdHoaDon directly
+                    updateInvoiceAndStock(idHoaDon); // Call this with the IdHoaDon
+                })
+                .fail(function() {
+                    alert("Đã xảy ra lỗi khi tải danh sách sản phẩm chi tiết.");
+                });
+        }
+
+        function bindQuantityButtons(idHoaDon) {
+            const decreaseButtons = document.querySelectorAll('.decrease');
+            const increaseButtons = document.querySelectorAll('.increase');
+
+            decreaseButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const input = this.nextElementSibling;
+                    let currentValue = parseInt(input.value);
+                    if (currentValue > 1) {
+                        input.value = currentValue - 1;
+                        updateInvoiceAndStock(idHoaDon);
+                    } else {
+                        alert("Số lượng phải lớn hơn 0.");
+                    }
+                });
+            });
+
+            increaseButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const input = this.previousElementSibling;
+                    let currentValue = parseInt(input.value);
+                    input.value = currentValue + 1;
+                    updateInvoiceAndStock(idHoaDon);
+                });
+            });
+        }
+
+        function updateInvoiceAndStock(idHoaDon) {
+            console.log("IdHoaDon in updateInvoiceAndStock:", idHoaDon);
+
+            if (!idHoaDon) {
+                console.error("IdHoaDon is not set correctly.");
+                return;
+            }
+
+            const sanPhamChiTiets = [];
+            document.querySelectorAll('.quantity-amount').forEach(input => {
+                const hoaDonChiTietId = input.getAttribute('data-id');
+                const quantity = parseInt(input.value);
+                if (quantity > 0) {
+                    sanPhamChiTiets.push({
+                        IdSanPhamChiTiet: hoaDonChiTietId,
+                        Quantity: quantity
+                    });
+                }
+            });
+
+            const model = {
+                IdHoaDon: idHoaDon,
+                SanPhamChiTiets: sanPhamChiTiets,
+            };
+
+            console.log("Model being sent:", JSON.stringify(model));
+
+            fetch('/Admin/BanHangTQ/UpdateInvoiceDetails', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(model)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    console.log('Cập nhật hóa đơn và số lượng thành công!');
+                } else {
+                    console.error('Cập nhật thất bại:', data.message);
+                    alert("Cập nhật thất bại. Vui lòng thử lại.");
+                }
+            })
+            .catch(error => console.error('Lỗi:', error));
+        }
+    </script>
+}

@@ -1,0 +1,60 @@
+﻿@model IEnumerable<AppData.Model.HoaDon>
+
+@{
+    ViewData["Title"] = "Danh Sách Hóa Đơn";
+    Layout = "~/Areas/Client/Views/Shared/_Tttk.cshtml";
+}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+
+    .invoice-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .invoice-item {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+
+        .invoice-item:hover {
+            transform: scale(1.02);
+        }
+
+    .invoice-header {
+        font-weight: bold;
+        font-size: 1.2em;
+        margin-bottom: 10px;
+    }
+
+    .invoice-detail {
+        margin: 5px 0;
+    }
+</style>
+<h1>Danh Sách Hóa Đơn</h1>
+
+<div class="invoice-list">
+    @foreach (var hoaDon in Model)
+    {
+        <div class="invoice-item">
+            <div class="invoice-header">Hóa Đơn @hoaDon.MaDon</div>
+            <div class="invoice-detail">Người Nhận: @hoaDon.NguoiNhan</div>
+            <div class="invoice-detail">Số Điện Thoại: @hoaDon.SoDienThoaiNguoiNhan</div>
+            <div class="invoice-detail">Địa Chỉ: @hoaDon.DiaChiGiaoHang</div>
+            <div class="invoice-detail">Tổng Tiền: @hoaDon.TongTienHoaDon VNĐ</div>
+            <div class="invoice-detail">Ngày Tạo: @hoaDon.NgayTao.ToString("yyyy-MM-dd")</div>
+            <a href="@Url.Action("Details", "HoaDon", new { id = hoaDon.IdHoaDon })" class="btn-detail">Thông Tin Chi Tiết</a>
+        </div>
+    }
+</div>
+

@@ -1,0 +1,238 @@
+﻿@model APPMVC.ViewModel.SanPhamChiTietClientViewModel
+@{
+    ViewData["Title"] = "Detail";
+    Layout = "~/Areas/Client/Views/Shared/_SanphamCT.cshtml";
+}
+
+<div class="container">
+    <div class="row">
+        <!-- Hình ảnh sản phẩm -->
+        <div class="col-lg-6">
+            <div class="product-detail-image">
+                @if (Model.SanPhamChiTietList != null && Model.SanPhamChiTietList.Any())
+                {
+                    var firstDetail = Model.SanPhamChiTietList.First();
+                    if (firstDetail.HinhAnhs != null && firstDetail.HinhAnhs.Any())
+                    {
+                        foreach (var hinhAnh in firstDetail.HinhAnhs)
+                        {
+                            var base64String = Convert.ToBase64String(hinhAnh.DataHinhAnh);
+                            var imageUrl = $"data:{hinhAnh.LoaiFileHinhAnh};base64,{base64String}";
+                            <img src="@imageUrl" alt="Hình ảnh sản phẩm" class="img-thumbnail" style="max-width: 200px; max-height: 200px; margin: 5px;" />
+                        }
+                    }
+                    else
+                    {
+                        <span class="text-muted">Không có hình ảnh cho sản phẩm này.</span>
+                    }
+                }
+                else
+                {
+                    <span class="text-muted">Không có thông tin chi tiết cho sản phẩm này.</span>
+                }
+            </div>
+        </div>
+
+        <!-- Thông tin sản phẩm -->
+        <div class="col-lg-6 product-detail-info">
+            <h2>@Model.TenSanPham</h2>
+            <p id="product-price" class="price">
+                @(Model.Gia.HasValue ? Model.Gia.Value.ToString("N0") + " VND" : "Chưa có giá")
+            </p>
+            <p id="product-quantity" class="quantity">
+                Số lượng: @(Model.SoLuong.HasValue ? Model.SoLuong.Value.ToString() : "Không có thông tin")
+            </p>
+
+            <div class="color-options">
+                <p><strong>Chọn Màu:</strong></p>
+                <div class="btn-group color-selector" role="group">
+                    @if (Model.AvailableColors != null && Model.AvailableColors.Any())
+                    {
+                        var distinctColors = Model.AvailableColors.DistinctBy(c => c.IdMauSac).ToList(); // Sử dụng DistinctBy để lọc màu trùng
+                        foreach (var color in distinctColors)
+                        {
+                            <button value="@color.IdMauSac" class="btn btn-dark color-btn @(color.IdMauSac == Model.SelectedColorId ? "active" : "")" type="button">
+                                @color.TenMauSac
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Không có màu sắc nào có sẵn.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="size-options">
+                <p><strong>Chọn Size:</strong></p>
+                <div class="btn-group size-selector" role="group">
+                    @if (Model.AvailableSizes != null && Model.AvailableSizes.Any())
+                    {
+                        var distinctSizes = Model.AvailableSizes.DistinctBy(s => s.IdKichCo).ToList();
+                        foreach (var size in distinctSizes)
+                        {
+                            <button value="@size.IdKichCo" class="btn btn-dark size-btn @(size.IdKichCo == Model.SelectedSizeId ? "active" : "")" type="button">
+                                @size.TenKichCo
+                            </button>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">Không có kích cỡ nào có sẵn.</p>
+                    }
+                </div>
+            </div>
+
+            <div class="product-detail-specs">
+                <ul>
+                    <li><strong>Materials:</strong> Leather, Synthetic Materials</li>
+                    <li><strong>Weight:</strong> 350g</li>
+                    <li><strong>Made in:</strong> Vietnam</li>
+                </ul>
+            </div>
+
+            <p>
+                The radiance lives on in the @Model.TenSanPham, the basketball original that puts a fresh spin on what you know best: durably stitched overlays, clean finishes and the perfect amount of flash to make you shine.
+            </p>
+
+            <div class="actions mt-3">
+                <button id="add-to-cart-btn" class="btn btn-primary" type="button">
+                    Thêm vào giỏ hàng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+        $(document).ready(function () {
+        let selectedColor = '@Model.SelectedColorId';
+        let selectedSize = '@Model.SelectedSizeId';
+        let sanPhamId = '@Model.IdSanPham';
+
+     // Đánh dấu màu đã chọn
+        if (selectedColor) {
+            $('.color-btn[value="' + selectedColor + '"]').addClass('active');
+        }
+
+        // Đánh dấu kích thước đã chọn
+        if (selectedSize) {
+            $('.size-btn[value="' + selectedSize + '"]').addClass('active');
+        }
+
+        $('.color-btn').click(function () {
+            $('.color-btn').removeClass('active');
+            $(this).addClass('active');
+            selectedColor = $(this).val();
+            console.log("Selected Color: " + selectedColor);
+            updateProductVariant();
+        });
+
+        $('.size-btn').click(function () {
+            $('.size-btn').removeClass('active');
+            $(this).addClass('active');
+            selectedSize = $(this).val();
+            console.log("Selected Size: " + selectedSize);
+            updateProductVariant();
+        });
+
+        function updateProductVariant() {
+            if (selectedColor && selectedSize) {
+                $.ajax({
+                    url: '/Client/SanPham/GetVariant',
+                    type: 'GET',
+                    data: { productId: sanPhamId, colorId: selectedColor, sizeId: selectedSize },
+                    success: function (data) {
+                        if (data.success) {
+                            $('#product-price').text(data.price.toLocaleString() + ' VND');
+                            $('#product-quantity').text('Số lượng: ' + data.quantity);
+
+                            // Cập nhật hình ảnh
+                            $('.product-detail-image').empty();
+                            data.images.forEach(function (image) {
+                                var imageUrl = 'data:' + image.type + ';base64,' + image.base64;
+                                $('.product-detail-image').append('<img src="' + imageUrl + '" alt="Hình ảnh sản phẩm" class="img-thumbnail" style="max-width: 200px; max-height: 200px; margin: 5px;" />');
+                            });
+                        } else {
+                            alert(data.message);
+                        }
+                    },
+                    error: function () {
+                        alert('Không thể cập nhật thông tin sản phẩm. Vui lòng thử lại.');
+                    }
+                });
+            }
+        }
+
+        $('#add-to-cart-btn').click(function () {
+            if (!selectedColor || !selectedSize) {
+                alert('Vui lòng chọn màu và kích thước trước khi thêm vào giỏ hàng.');
+                return;
+            }
+
+            $.ajax({
+                url: '/Client/SanPham/AddToCard',
+                type: 'POST',
+                data: { productId: sanPhamId, colorId: selectedColor, sizeId: selectedSize },
+                success: function () {
+                    alert('Sản phẩm đã được thêm vào giỏ hàng.');
+                },
+                error: function () {
+                    alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.');
+                }
+            });
+        });
+    });
+</script>
+
+<style>
+    .color-btn, .size-btn {
+        transition: box-shadow 0.3s ease;
+    }
+
+        .color-btn.active, .size-btn.active {
+            background-color: #0056b3;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 86, 179, 0.7), 0 0 20px rgba(0, 86, 179, 0.5);
+        }
+
+    .product-detail-image {
+        text-align: center;
+    }
+
+    .product-detail-info {
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .price {
+        font-size: 24px;
+        color: #007bff;
+        margin-bottom: 20px;
+    }
+
+    .quantity {
+        font-size: 20px;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .color-options, .size-options {
+        margin-bottom: 20px;
+    }
+
+    .btn-dark {
+        margin-right: 5px;
+        border-radius: 5px;
+    }
+
+    .actions {
+        margin-top: 20px;
+    }
+
+    #add-to-cart-btn {
+        width: 100%;
+    }
+</style>

@@ -1,0 +1,85 @@
+﻿@model List<AppData.Model.Promotion>
+@{
+    ViewData["Title"] = "Promotion List";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Promotion List</h1>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<p>Promotion Count: @Model.Count</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                No.
+            </th>
+            <th>
+                Promotion Name
+            </th>
+            <th>
+                Discount Percentage
+            </th>
+            <th>
+                Created Time
+            </th>
+            <th>
+                Start Time
+            </th>
+            <th>
+                End Time
+            </th>
+            <th>
+                Status
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            int i = 1;
+        }
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @i
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TenPromotion)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PhanTramGiam)%
+                </td>
+                <td>
+                    @item.NgayTao.ToString("dd/MM/yyyy | HH:mm tt")
+                </td>
+                <td>
+                    @item.NgayBatDau.ToString("dd/MM/yyyy | HH:mm tt")
+                </td>
+                <td>
+                    @item.NgayKetThuc.ToString("dd/MM/yyyy | HH:mm tt")
+                </td>
+                <td>
+                    @{
+                        string statusClass = item.TrangThai switch
+                        {
+                            0 => "text-danger", // Red for Disabled
+                            1 => "text-success", // Green for Active
+                            2 => "text-warning", // Yellow for Paused
+                            3 => "text-secondary", // Grey for Expired
+                            _ => "text-muted" // Default for unknown status
+                        };
+                    }
+                    <span class="@statusClass">@item.GetTrangThaiDisplay()</span>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdPromotion">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdPromotion" onclick="return confirm('Are you sure you want to delete this promotion?');">Delete</a>
+                </td>
+            </tr>
+            i++;
+        }
+    </tbody>
+</table>

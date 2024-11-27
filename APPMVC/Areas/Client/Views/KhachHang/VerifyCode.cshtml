@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Xác Minh Mã";
+    var email = TempData["Email"] as string;
+}
+
+<h2>Xác Minh Mã</h2>
+
+<form asp-action="VerifyCode" method="post">
+    <input type="text" name="code" placeholder="Nhập mã xác thực" required />
+    <input type="hidden" name="email" value="@email" />
+    <button type="submit">Xác minh mã</button>
+</form>
+
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="text-danger">@Html.ValidationSummary()</div>
+}
+

@@ -1,0 +1,69 @@
+﻿@model AppData.Model.Promotion
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Edit</h1>
+<h4>Promotion</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="IdPromotion" />
+            <div class="form-group">
+                <label asp-for="TenPromotion" class="control-label"></label>
+                <input asp-for="TenPromotion" class="form-control" />
+                <span asp-validation-for="TenPromotion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PhanTramGiam" class="control-label"></label>
+                <input asp-for="PhanTramGiam" class="form-control" />
+                <span asp-validation-for="PhanTramGiam" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayBatDau" class="control-label"></label>
+                <input asp-for="NgayBatDau" class="form-control date-input" type="datetime-local" value="@Model.NgayBatDau.ToString("yyyy-MM-ddTHH:mm")" />
+                <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayKetThuc" class="control-label"></label>
+                <input asp-for="NgayKetThuc" class="form-control date-input" type="datetime-local" value="@Model.NgayKetThuc.ToString("yyyy-MM-ddTHH:mm")" />
+                <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TrangThai" class="control-label"></label>
+                <select asp-for="TrangThai" class="form-control" asp-items="ViewBag.TrangThaiList"></select>
+                <span asp-validation-for="TrangThai" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+    document.addEventListener('DOMContent loaded', function () {
+        var dateInputs = document.querySelectorAll('.date-input');
+        dateInputs.forEach(function (input) {
+            input.addEventListener('change', function () {
+                var date = new Date(this.value);
+                var formattedDate = date.toLocaleString('en-GB', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                }).replace(',', '');
+                var displaySpan = this.nextElementSibling;
+                displaySpan.textContent = formattedDate;
+            });
+        });
+    });
+</script>

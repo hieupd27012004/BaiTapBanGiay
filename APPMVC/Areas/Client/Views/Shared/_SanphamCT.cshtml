@@ -1,0 +1,76 @@
+﻿<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+<!doctype html>
+<html lang="en">
+
+<head>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Untree.co">
+	<link rel="shortcut icon" href="favicon.png">
+
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap4" />
+
+	<!-- Bootstrap CSS -->
+	<link href="~/Client/css/bootstrap.min.css" rel="stylesheet">
+	<link href="~/Client/css/tiny-slider.css" rel="stylesheet">
+	<link href="~/Client/css/style.css" rel="stylesheet">
+</head>
+
+<body>
+	@Html.Partial("_Nav")
+
+	<div class="hero">
+		<div class="container">
+			<div class="row justify-content-between">
+				<div class="col-lg-5">
+					<div class="intro-excerpt">
+						<h1>Shop</h1>
+					</div>
+				</div>
+				<div class="col-lg-7">
+					<div class="hero-img-wrap">
+						<img src="~/Client/images/Shoes.png" class="img-fluid">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Hero Section -->
+
+
+
+	<div class="untree_co-section product-section before-footer-section">
+		<div class="container">
+			<div class="backbutton">
+				<a href="@Url.Action("Index", "SanPham",new { area = "Client" })" class="btn btn-dark btn-xs">
+					<img src="~/Client/images/chevron-left.jpg" alt="Back" style="filter: invert(1); width: 20px">Back to shop
+				</a>
+			</div>
+			<div class="row">
+				<div class="col-lg-12 mt-3">
+					<div class="product-detail">
+						<div class="row">
+							@RenderBody()
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="~/Client/js/bootstrap.bundle.min.js"></script>
+	<script src="~/Client/js/tiny-slider.js"></script>
+	<script src="~/Client/js/custom.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+﻿@model AppData.Model.NhanVien
+
+
+@{
+    ViewData["Title"] = "MyProfile";
+}
+
+<h1>MyProfile</h1>
+<div>
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Họ Tên</dt>
+        <dd class="col-sm-10">@Model.TenNhanVien</dd>
+
+       
+
+        <dt class="col-sm-2">Số Điện Thoại</dt>
+        <dd class="col-sm-10">@Model.SoDienThoai</dd>
+
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.Email</dd>
+
+        <dt class="col-sm-2">Địa Chỉ</dt>
+        <dd class="col-sm-10">@Model.DiaChi</dd>
+
+        <dt class="col-sm-2">Chức Vụ</dt>
+        <dd class="col-sm-10">@ViewBag.TenChucVu</dd>
+
+        <dt class="col-sm-2">Ngày Tạo</dt>
+        <dd class="col-sm-10">@Model.NgayTao.ToString("dd-MM-yyyy")</dd>
+
+        
+    </dl>
+    <dt class="col-sm-2">Ảnh</dt>
+    <img src="~/Admin/imgNV/@Model.AnhNhanVien" alt="User Avatar" style="width: 150px; height: 150px;" />
+</div>
+<button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("ChangePassword", "NhanVien", new { id = Model.IdNhanVien })'">Đổi Mật Khẩu</button>
+<button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("EditProfile", "NhanVien", new { id = Model.IdNhanVien })'">Chỉnh Sửa</button>
+
+

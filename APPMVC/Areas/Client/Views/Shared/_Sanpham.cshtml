@@ -1,0 +1,286 @@
+﻿<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Untree.co">
+	<link rel="shortcut icon" href="favicon.png">
+
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap4" />
+
+	<!-- Bootstrap CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<link href="css/tiny-slider.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+	<title>Furni Free Bootstrap 5 Template for Furniture and Interior Design Websites by Untree.co </title>
+	<style>
+		.sidebar {
+			background-color: #f8f9fa;
+			padding: 30px;
+			border-radius: 10px;
+			box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+		}
+
+		.sidebar-block {
+			margin-bottom: 30px;
+			border-bottom: 1px solid #e9ecef;
+			padding-bottom: 20px;
+		}
+
+		.sidebar-block:last-child {
+			border-bottom: none;
+			padding-bottom: 0;
+		}
+
+		.sidebar-title {
+			font-size: 20px;
+			margin-bottom: 20px;
+			color: #333;
+			font-weight: 600;
+		}
+
+		.category-list li a {
+			color: #555;
+			padding: 8px 0;
+			transition: all 0.3s ease;
+		}
+
+		.category-list li a:hover {
+			color: #3b5d50;
+			padding-left: 5px;
+		}
+
+		.count {
+			background-color: #3b5d50;
+			color: #fff;
+			padding: 2px 8px;
+			border-radius: 20px;
+			font-size: 12px;
+		}
+
+		.color-filters {
+			display: flex;
+			flex-wrap: wrap;
+		}
+
+		.color-filters li {
+			margin-right: 10px;
+			margin-bottom: 10px;
+		}
+
+		.color-filters li a {
+			display: block;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+			border: 2px solid #fff;
+			box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+			transition: all 0.3s ease;
+		}
+
+		.color-filters li a:hover {
+			transform: scale(1.1);
+		}
+
+		.custom-control {
+			margin-bottom: 10px;
+		}
+
+		.custom-control-label {
+			color: #555;
+			cursor: pointer;
+		}
+
+		.price-range-value {
+			margin-top: 15px;
+			font-weight: 600;
+			color: #3b5d50;
+		}
+	</style>
+</head>
+
+<body>
+
+	@Html.Partial("_Nav")
+	<div class="hero bg-dark">
+		<div class="container">
+			<div class="row justify-content-between">
+				<div class="col-lg-5">
+					<div class="intro-excerpt">
+						<h1 class="text-white">Shop</h1>
+					</div>
+				</div>
+				<div class="col-lg-7">
+					<div class="hero-img-wrap">
+						<img src="images/Shoes.png" class="img-fluid">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Hero Section -->
+
+
+
+	<div class="untree_co-section product-section before-footer-section">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3">
+					<div class="sidebar" style="background-color: #000000; padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);">
+						<!-- Categories -->
+						<div class="sidebar-block">
+							<h3 class="sidebar-title" style="color: white;">Categories</h3>
+							<ul class="list-unstyled category-list">
+								<li>
+									<a href="#" class="d-flex justify-content-between align-items-center" style="color: white; text-decoration: none;">
+										Nike <span class="count" style="background-color: black;">23</span>
+									</a>
+								</li>
+								<li>
+									<a href="#" class="d-flex justify-content-between align-items-center" style="color: white; text-decoration: none;">
+										Adidas <span class="count" style="background-color: black;">18</span>
+									</a>
+								</li>
+								<li>
+									<a href="#" class="d-flex justify-content-between align-items-center" style="color: white; text-decoration: none;">
+										Asics <span class="count" style="background-color: black;">15</span>
+									</a>
+								</li>
+								<li>
+									<a href="#" class="d-flex justify-content-between align-items-center" style="color: white; text-decoration: none;">
+										Vans <span class="count" style="background-color: black;">12</span>
+									</a>
+								</li>
+								<li>
+									<a href="#" class="d-flex justify-content-between align-items-center" style="color: white; text-decoration: none;">
+										New Balance <span class="count" style="background-color: black;">12</span>
+									</a>
+								</li>
+
+							</ul>
+						</div>
+
+						<!-- Price Filter -->
+						<div class="sidebar-block">
+							<h3 class="sidebar-title" style="color: white;">Price</h3>
+							<div class="price-range-slider">
+								<div id="slider-range"></div>
+								<p class="price-range-value">
+									<span id="price-range-text" style="color: white;"></span>
+								</p>
+							</div>
+						</div>
+
+						<!-- Color Filter -->
+						<div class="sidebar-block">
+							<h3 class="sidebar-title" style="color: white;">Colors</h3>
+							<ul class="list-unstyled color-filters">
+								<li><a href="#" style="background-color: #c01d30;" title="Red"></a></li>
+								<li><a href="#" style="background-color: #FFC107;" title="Yellow"></a></li>
+								<li><a href="#" style="background-color: #ff6a00;" title="Orange"></a></li>
+								<li><a href="#" style="background-color: #247840;" title="Green"></a></li>
+								<li><a href="#" style="background-color: #03A9F4;" title="Blue"></a></li>
+								<li><a href="#" style="background-color: #9C27B0;" title="Violet"></a></li>
+								<li><a href="#" style="background-color: #f32187;" title="Pink"></a></li>
+								<li><a href="#" style="background-color: #000000;" title="Black"></a></li>
+								<li><a href="#" style="background-color: #ffffff;" title="White"></a></li>
+
+							</ul>
+						</div>
+
+						<!-- Size Filter -->
+						<div class="sidebar-block">
+							<h3 class="sidebar-title" style="color: white;">Size</h3>
+							<div class="size-buttons">
+								<button class="size-button" data-size="35" style="border-radius: 5px;">35</button>
+								<button class="size-button" data-size="36" style="border-radius: 5px;">36</button>
+								<button class="size-button" data-size="37" style="border-radius: 5px;">37</button>
+								<button class="size-button" data-size="38" style="border-radius: 5px;">38</button>
+								<button class="size-button" data-size="39" style="border-radius: 5px;">39</button>
+								<button class="size-button" data-size="40" style="border-radius: 5px;">40</button>
+								<button class="size-button" data-size="41" style="border-radius: 5px;">41</button>
+								<button class="size-button" data-size="42" style="border-radius: 5px;">42</button>
+								<button class="size-button" data-size="43" style="border-radius: 5px;">43</button>
+								<button class="size-button" data-size="44" style="border-radius: 5px;">44</button>
+								<button class="size-button" data-size="45" style="border-radius: 5px;">45</button>
+							</div>
+						</div>
+						<style>
+							.size-buttons {
+								display: flex;
+								flex-wrap: wrap;
+								gap: 5px;
+							}
+							.size-button {
+								background-color: transparent;
+								border: 1px solid white;
+								color: white;
+								padding: 5px 10px;
+								cursor: pointer;
+								transition: background-color 0.3s, color 0.3s;
+							}
+							.size-button.active {
+								background-color: white;
+								color: #3b5d50;
+							}
+						</style>
+						<script>
+							document.addEventListener('DOMContentLoaded', function() {
+								const sizeButtons = document.querySelectorAll('.size-button');
+								sizeButtons.forEach(button => {
+									button.addEventListener('click', function() {
+										sizeButtons.forEach(btn => btn.classList.remove('active'));
+										this.classList.add('active');
+									});
+								});
+							});
+						</script>
+						<!-- Gender Filter -->
+						<div class="sidebar-block">
+							<h3 class="sidebar-title" style="color: white;">Gender</h3>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="gender-male">
+								<label class="custom-control-label" for="gender-male" style="color: white;">Male</label>
+							</div>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="gender-female">
+								<label class="custom-control-label" for="gender-female" style="color: white;">Female</label>
+							</div>
+							<div class="custom-control custom-checkbox">
+								<input type="checkbox" class="custom-control-input" id="gender-unisex">
+								<label class="custom-control-label" for="gender-unisex" style="color: white;">Unisex</label>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Products Area -->
+				<div class="col-lg-9" id="productsArea">
+					@RenderBody()
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+
+
+
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/tiny-slider.js"></script>
+	<script src="js/custom.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+	<link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+</body>
+
+</html>

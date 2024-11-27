@@ -1,0 +1,374 @@
+﻿@model AppData.ViewModel.HoaDonChiTietViewModel
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<style>
+    .quantity-container {
+        display: inline-flex;
+        align-items: center; 
+        justify-content: center; 
+        gap: 0; 
+    }
+
+        .quantity-container .btn {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ced4da;
+            border-radius: 0.25rem; 
+            margin-bottom: 20px;
+        }
+
+    .quantity-amount {
+        width: 60px;
+        height: 40px; 
+        text-align: center; 
+        border: 1px solid #ced4da; 
+        border-radius: 0.25rem; 
+        outline: none; 
+        padding: 0; 
+        margin: 0; 
+    }
+    .modal-dialog {
+        max-width: 80%;
+        width: auto;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .table {
+        width: 100%;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f7fa;
+        color: #333;
+    }
+
+    .content-wrapper {
+        padding: 20px;
+    }
+
+    h4 {
+        color: #495057;
+        margin-bottom: 15px;
+    }
+
+    .table {
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #dee2e6;
+        }
+
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+    .btn {
+        margin-top: 20px;
+    }
+</style>
+
+<div class="content-wrapper">
+        
+        <h4>Danh Sách Sản Phẩm</h4>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+            Thêm Sản Phẩm
+        </button>
+
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true" data-idhoadon="@Model.HoaDon.IdHoaDon">    
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addProductModalLabel">Danh Sách Sản Phẩm Chi Tiết</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="productDetailList">
+                            @await Html.PartialAsync("ListSanPhamChiTiet", (Model.SanPhamChiTiets, @Model.HoaDon.IdHoaDon))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Số Lượng</th>
+                    <th>Giá</th>
+                    <th>Hình Ảnh</th>
+                    <th>Màu Sắc</th>
+                    <th>Kích Cỡ</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.SanPhamChiTiets != null && Model.SanPhamChiTiets.Any())
+                {
+                    foreach (var sanPham in Model.SanPhamChiTiets)
+                    {
+                        <tr>
+                            <td>@sanPham.ProductName</td>
+                            <td>
+                                <div class="quantity-container">
+                                    <button class="btn btn-outline-secondary decrease" type="button" aria-label="Decrease Quantity" data-id="@sanPham.IdSanPhamChiTiet">−</button>
+                                    <input type="number" name="quantities[@sanPham.IdSanPhamChiTiet]" class="form-control quantity-amount" value="@sanPham.Quantity" min="1" aria-label="Quantity" data-id="@sanPham.IdSanPhamChiTiet" />
+                                    <button class="btn btn-outline-secondary increase" type="button" aria-label="Increase Quantity" data-id="@sanPham.IdSanPhamChiTiet">+</button>
+                                </div>
+                            </td>
+                            <td>@sanPham.Price.ToString("N0")</td>
+                            <td>
+                                @if (sanPham.HinhAnhs != null && sanPham.HinhAnhs.Any())
+                                {
+                                    var hinhAnh = sanPham.HinhAnhs.First();
+                                    var base64String = Convert.ToBase64String(hinhAnh.DataHinhAnh);
+                                    var imageUrl = $"data:{hinhAnh.LoaiFileHinhAnh};base64,{base64String}";
+                                    <img src="@imageUrl" alt="Hình ảnh sản phẩm" style="width: 50px; height: auto;" />
+                                }
+                                else
+                                {
+                                    <span>Không có hình ảnh</span>
+                                }
+                            </td>
+                            <td>
+                                @if (sanPham.MauSac != null && sanPham.MauSac.Any())
+                                {
+                                    @string.Join(", ", sanPham.MauSac)
+                                }
+                                else
+                                {
+                                    <span>Không có màu sắc</span>
+                                }
+                            </td>
+                            <td>
+                                @if (sanPham.KichCo != null && sanPham.KichCo.Any())
+                                {
+                                    @string.Join(", ", sanPham.KichCo)
+                                }
+                                else
+                                {
+                                    <span>Không có kích cỡ</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="6">Không có sản phẩm nào.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <br />
+        <div class="d-flex justify-content-between align-items-center">
+            <h4>Khách Hàng</h4>
+            <button class="btn btn-primary" id="btnAddCustomer">Thêm Khách Hàng</button>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-4">Tên Khách Hàng</dt>
+@*                     <dd class="col-sm-8">@Model.CustomerName</dd> *@
+                     <dd class="col-sm-8">Khách Lẻ</dd>
+                </dl>
+            </div>
+            <div class="col-md-6 details-card">
+                <dl class="row">
+                    <dt class="col-sm-6">Tổng Tiền Hàng</dt>
+                    <dd class="col-sm-6">@Model.DonGia.ToString("N0")</dd>
+                    <dt class="col-sm-6">Giảm Giá</dt>
+                    <dd class="col-sm-6">@Model.PhiVanChuyen</dd>
+                    <dt class="col-sm-6">Phí Vận Chuyển</dt>
+                    <dd class="col-sm-6">@Model.PhiVanChuyen</dd>
+                    <dt class="col-sm-6">Phương Thức Thanh Toán</dt>
+                    <dd class="col-sm-6">
+                        <div>
+                            <label>
+                                <input type="radio" name="paymentMethod" value="cash" checked /> Tiền Mặt
+                            </label>
+                            <label>
+                                <input type="radio" name="paymentMethod" value="bankTransfer" /> Chuyển Khoản
+                            </label>
+                        </div>
+                    </dd>
+                    <dt class="col-sm-6">Tổng Tiền</dt>
+                    <dd class="col-sm-6">@Model.TongTien.ToString("N0")</dd>
+                </dl>
+                <div class="text-right mt-3">
+                    <form action="@Url.Action("ThanhToanVNPay", "BanHangTQ",  new { area = "Admin" })" method="post">
+                        <input type="hidden" name="idHoaDon" value="@Model.HoaDon.IdHoaDon" />
+                        <button id="btnPayVNPay" name="payment"  class="btn btn-primary">Thanh Toán VNPay</button>
+                    </form>
+                    
+                    <form action="@Url.Action("XacNhanThanhToan", "BanHangTQ",  new { area = "Admin" })" method="post">
+                        <input type="hidden" name="idHoaDon" value="@Model.HoaDon.IdHoaDon" />
+                        <button id="confirmPaymentButton" class="btn btn-success">Xác Nhận Thanh Toán</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <br />
+        <a asp-action="Index" class="btn btn-primary">Quay lại danh sách</a>
+    </div>
+
+
+@section Scripts {
+    <script>
+        function confirmPayment(idHoaDon) {
+            // Hiển thị thông báo đang xử lý
+            $("#loadingMessage").show();
+
+            $.ajax({
+                url: '/Admin/BanHangTQ/XacNhanThanhToan', // Địa chỉ API xử lý thanh toán
+                type: 'POST',
+                data: {
+                    idHoaDon: idHoaDon
+                },
+                success: function (response) {
+                    // Ẩn thông báo đang xử lý
+                    $("#loadingMessage").hide();
+
+                    if (response.success) {
+                        // Nếu thành công, thông báo người dùng và hiển thị link tải PDF
+                        alert('Thanh toán thành công! Hóa đơn đã được lưu.');
+                        window.location.href = response.fileUrl;  // Mở file PDF đã tạo
+                    } else {
+                        alert('Có lỗi xảy ra: ' + response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    // Ẩn thông báo khi xảy ra lỗi
+                    $("#loadingMessage").hide();
+                    alert('Đã xảy ra lỗi khi xác nhận thanh toán: ' + error);
+                }
+            });
+        }
+
+        // Gọi hàm khi người dùng bấm vào nút xác nhận thanh toán
+        $(document).on('click', '#btnConfirmPayment', function () {
+            var idHoaDon = $(this).data('id');  // Lấy id hóa đơn từ dữ liệu của nút
+            confirmPayment(idHoaDon); // Gọi hàm xử lý thanh toán
+        });
+        $(document).ready(function () {
+            var idHoaDon = '@Model.HoaDon.IdHoaDon';
+            console.log("ID Hóa Đơn:", idHoaDon);  // Kiểm tra giá trị của idHoaDon
+
+            $('#addProductModal').on('show.bs.modal', function () {
+                $.get('@Url.Action("GetSanPhamChiTietList", "BanHangTQ", new { area = "Admin" })', { idHoaDon: idHoaDon })
+                    .done(function (data) {
+                        $('#productDetailList').html(data);
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error: " + textStatus, errorThrown);
+                        alert("Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại.");
+                    });
+            });
+        });
+        $(document).ready(function () {
+            $('#addProductModal').on('show.bs.modal', function () {
+                var idHoaDon = $(this).data('idhoadon'); 
+                if (!idHoaDon) {
+                    console.error("ID hóa đơn không hợp lệ.");
+                    alert("Đã xảy ra lỗi, vui lòng thử lại.");
+                    return;
+                }
+
+                $.get('@Url.Action("GetSanPhamChiTietList", "BanHangTQ", new { area = "Admin" })', { idHoaDon: idHoaDon })
+                    .done(function (data) {
+                        $('#productDetailList').html(data);
+                    })
+                    .fail(function (jqXHR, textStatus, errorThrown) {
+                        console.error("Error: " + textStatus, errorThrown);
+                        alert("Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại.");
+                    });
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const decreaseButtons = document.querySelectorAll('.decrease');
+            const increaseButtons = document.querySelectorAll('.increase');
+
+            decreaseButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const input = this.nextElementSibling;
+                    let currentValue = parseInt(input.value);
+                    if (currentValue > 1) {
+                        input.value = currentValue - 1;
+                        updateInvoiceAndStock();
+                    } else {
+                        alert("Số lượng phải lớn hơn 0.");
+                    }
+                });
+            });
+
+            increaseButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const input = this.previousElementSibling;
+                    let currentValue = parseInt(input.value);
+                    input.value = currentValue + 1;
+                    updateInvoiceAndStock();
+                });
+            });
+
+            function updateInvoiceAndStock() {
+                const idHoaDon = '@Model.HoaDon.IdHoaDon';
+                const sanPhamChiTiets = [];
+
+                document.querySelectorAll('.quantity-amount').forEach(input => {
+                    const hoaDonChiTietId = input.getAttribute('data-id');
+                    const quantity = parseInt(input.value);
+                    sanPhamChiTiets.push({
+                        IdSanPhamChiTiet: hoaDonChiTietId,
+                        Quantity: quantity
+                    });
+                });
+
+                const model = {
+                    IdHoaDon: idHoaDon,
+                    SanPhamChiTiets: sanPhamChiTiets
+                };
+
+                fetch('/Admin/BanHangTQ/UpdateInvoiceDetails', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(model)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            console.log('Cập nhật hóa đơn và số lượng thành công!');
+                        } else {
+                            console.error('Cập nhật thất bại:', data.message);
+                            alert("Cập nhật thất bại. Vui lòng thử lại.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Lỗi:', error);
+                        alert("Đã xảy ra lỗi khi cập nhật thông tin.");
+                    });
+            }
+        });   
+    </script>
+}

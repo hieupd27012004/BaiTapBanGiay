@@ -1,0 +1,304 @@
+﻿@model List<AppData.ViewModel.GioHangChiTietViewModel>
+
+@{
+    ViewData["Title"] = "Cart";
+    Layout = "~/Areas/Client/Views/Shared/_LayoutClient.cshtml";
+}
+
+<style>
+    .hero {
+        background-image: url('https://ananas.vn/wp-content/uploads/kv_basas_mobileBanner_4_2019.jpg');
+        background-size: cover;
+        background-position: center;
+        height: 400px;
+        display: flex;
+        align-items: center;
+        color: white;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .quantity-container .btn {
+        min-width: 30px;
+        height: 30px;
+        padding: 0;
+        border-radius: 50%;
+        font-size: 16px;
+    }
+
+    .quantity-container .form-control {
+        border: 1px solid #ced4da;
+        border-radius: 0;
+    }
+
+    .quantity-container .input-group-prepend,
+    .quantity-container .input-group-append {
+        border-radius: 0;
+    }
+</style>
+
+<div class="hero">
+    <div class="container">
+        <div class="row justify-content-center align-items-center text-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 text-white mb-4">Your Shopping Cart</h1>
+                <p class="lead text-white">Manage your items and proceed to checkout</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="untree_co-section before-footer-section">
+    <div class="container">
+        <form id="cartForm">
+            <div class="site-blocks-table">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th hidden>Id</th>
+                            <th>Select</th>
+                            <th class="product-thumbnail">Image</th>
+                            <th class="product-name">Product</th>
+                            <th class="product-price">Price</th>
+                            <th class="product-quantity">Quantity</th>
+                            <th class="product-total">Total</th>
+                            <th class="product-remove">Remove</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            var itemTotal = item.DonGia * item.SoLuong;
+                            <tr data-item-price="@item.DonGia">
+                                <td hidden>@item.IdGioHangChiTiet</td>
+                                <td>
+                                    <input type="checkbox" asp-for="@item.Chon" />
+                                    <input type="hidden" asp-for="@item.IdGioHangChiTiet" />
+                                </td>
+                                <td class="product-thumbnail">
+                                    @if (item.HinhAnhs != null && item.HinhAnhs.Any())
+                                    {
+                                        var hinhAnh = item.HinhAnhs.First();
+                                        var base64String = Convert.ToBase64String(hinhAnh.DataHinhAnh);
+                                        var imageUrl = $"data:{hinhAnh.LoaiFileHinhAnh};base64,{base64String}";
+                                        <img src="@imageUrl" alt="Image" class="img-fluid" />
+                                    }
+                                    else
+                                    {
+                                        <span>No image available</span>
+                                    }
+                                </td>
+                                <td class="product-name">
+                                    <h2 class="h5 text-black">@item.TenSanPham</h2>
+                                </td>
+                                <td>@item.DonGia.ToString("C")</td>
+                                <td>
+                                    <div class="input-group mb-3 d-flex justify-content-center align-items-center quantity-container" style="max-width: 120px; margin: auto;">
+                                        <div class="input-group-prepend">
+                                            <button class="btn btn-outline-black decrease rounded-circle" type="button" aria-label="Decrease Quantity">&minus;</button>
+                                        </div>
+                                        <input type="number" name="quantities[@item.IdGioHangChiTiet]" class="form-control text-center quantity-amount" value="@item.SoLuong" min="1" aria-label="Quantity" />
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-black increase rounded-circle" type="button" aria-label="Increase Quantity">&plus;</button>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="total-price" data-item-total="@itemTotal">@itemTotal.ToString("C")</td>
+                                <td>
+                                    <button type="button" formaction="/Cart/Remove/@item.IdGioHangChiTiet" class="btn btn-black btn-sm">X</button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <hr />
+            </div>
+        </form>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="row mb-5">
+                    <div class="col-md-6 mb-3 mb-md-0">
+                        <button class="btn btn-outline-black btn-sm btn-block" onclick="window.location='@Url.Action("Index", "Products")'">Continue Shopping</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label class="text-black h4" for="coupon">Coupon</label>
+                        <p>Enter your coupon code if you have one.</p>
+                    </div>
+                    <div class="col-md-8 mb-3 mb-md-0">
+                        <input type="text" class="form-control py-3" id="coupon" placeholder="Coupon Code" />
+                    </div>
+                    <div class="col-md-4">
+                        <button class="btn btn-black">Apply Coupon</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 pl-5">
+                <div class="row justify-content-end">
+                    <div class="col-md-7">
+                        <div class="row">
+                            <div class="col-md-12 text-right border-bottom mb-5">
+                                <h3 class="text-black h4 text-uppercase">Cart Totals</h3>
+                            </div>
+                        </div>
+                        <div id="cart-totals" style="display: none;">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <span class="text-black">Subtotal</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <strong class="text-black" id="subtotal">0</strong>
+                                </div>
+                            </div>
+                            <div class="row mb-5">
+                                <div class="col-md-6">
+                                    <span class="text-black">Total</span>
+                                </div>
+                                <div class="col-md-6 text-right">
+                                    <strong class="text-black" id="total">0</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button class="btn btn-black btn-lg py-3 btn-block"
+                                        onclick="window.location='@Url.Action("Checkout", "HomeClient", new { area = "Client" })'">
+                                    Thanh Toán
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    let previousQuantities = {};
+
+    function initializeQuantityButtons() {
+        document.querySelectorAll('.quantity-amount').forEach(input => {
+            const id = input.closest('tr').querySelector('td').textContent.trim();
+            previousQuantities[id] = input.value;
+
+            input.addEventListener('input', function () {
+                if (parseInt(this.value) < 1) {
+                    this.value = 1; 
+                }
+                updateTotal(); 
+                updateCartQuantity(this);
+            });
+        });
+
+        document.querySelectorAll('.increase').forEach(button => {
+            button.addEventListener('click', handleIncrease);
+        });
+
+        document.querySelectorAll('.decrease').forEach(button => {
+            button.addEventListener('click', handleDecrease);
+        });
+
+        document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+            checkbox.addEventListener('change', updateTotal);
+        });
+    }
+
+function handleIncrease() {
+    const input = this.closest('.input-group').querySelector('.quantity-amount');
+    let currentVal = parseInt(input.value);
+    
+    if (!isNaN(currentVal)) {
+        input.value = currentVal + 1; 
+        updateTotal();
+        updateCartQuantity(input); 
+    }
+}
+
+    function handleDecrease() {
+        const input = this.closest('.input-group').querySelector('.quantity-amount');
+        let currentVal = parseInt(input.value);
+
+        if (!isNaN(currentVal)) {
+            if (currentVal > 2) {
+                input.value = currentVal - 1;
+                updateTotal();
+                updateCartQuantity(input);
+            } else if (currentVal === 2) {
+                input.value = 1;
+                updateTotal();
+                updateCartQuantity(input);
+            } else if (currentVal === 0) {
+                input.value = 1;
+                updateTotal();
+            }
+        }
+    }
+    function updateTotal() {
+        let subtotal = 0;
+        let hasCheckedItems = false;
+
+        document.querySelectorAll('tr[data-item-price]').forEach(row => {
+            const price = parseFloat(row.dataset.itemPrice);
+            const quantity = parseInt(row.querySelector('.quantity-amount').value);
+            const isChecked = row.querySelector('input[type="checkbox"]').checked;
+
+            const total = price * quantity;
+            row.querySelector('.total-price').textContent = total.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+            if (isChecked) {
+                subtotal += total;
+                hasCheckedItems = true;
+            }
+        });
+
+        document.getElementById('subtotal').textContent = subtotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+        document.getElementById('total').textContent = subtotal.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+
+        const cartTotals = document.getElementById('cart-totals');
+        cartTotals.style.display = hasCheckedItems ? 'block' : 'none';
+    }
+
+    function updateCartQuantity(input) {
+        const row = input.closest('tr');
+        const id = row.querySelector('td').textContent.trim();
+        const price = parseFloat(row.dataset.itemPrice);
+        const quantity = parseFloat(input.value);
+        const total = (price * quantity).toFixed(2);
+
+        const previousQuantity = previousQuantities[id];
+
+        const quantities = [{
+            IdGioHangChiTiet: id,
+            Quantity: quantity,
+            TongTien: parseFloat(total)
+        }];
+
+        fetch('/Client/HomeClient/UpdateQuantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(quantities)
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    input.value = previousQuantity; 
+                    updateTotal();
+                    alert(data.message || 'Failed to update quantities.');
+                } else {
+                    previousQuantities[id] = quantity;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                input.value = previousQuantity;
+            });
+
+    }
+
+    document.addEventListener('DOMContentLoaded', initializeQuantityButtons);
+</script>

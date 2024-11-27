@@ -1,0 +1,21 @@
+﻿@model AppData.Model.NhanVien
+<form asp-action="Login" method="post">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="alert alert-danger">
+            @error.ErrorMessage
+        </div>
+    }
+    <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" class="form-control" />
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="MatKhau"></label>
+        <input asp-for="MatKhau" class="form-control" type="password" />
+        <span asp-validation-for="MatKhau" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Đăng nhập</button>
+</form>
+<button type="button" class="btn btn-primary" onclick="location.href='@Url.Action("ForgotPassword", "NhanVien")'">Quen Mật Khẩu</button>

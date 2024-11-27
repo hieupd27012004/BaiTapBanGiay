@@ -1,0 +1,141 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<AppData.ViewModel.HoaDonViewModell>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .table td {
+        padding: 8px;
+        margin: 0;
+    }
+
+    .table {
+        border-collapse: collapse;
+    }
+</style>
+
+<div class="content-wrapper">
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success" style="padding: 10px; margin-right:20px;margin-top:20px; align-self:end; position: absolute">
+            @TempData["Success"]
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger" style="padding: 10px; align-self:end;margin-right:20px;margin-top:20px; position: absolute">
+            @TempData["Error"]
+        </div>
+    }
+
+    <div class="container-xxl flex-grow-1 container-p-y">
+        <h4 class="fw-bold py-3 mb-4">
+            <span class="text-muted fw-light">Quản lý hóa đơn /</span> Hóa đơn
+        </h4>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mb-4" style="padding: 20px">
+                    <div class="nav-item d-flex align-items-center justify-content-between">
+                        <form action="GetAll" method="get" class="d-flex align-items-center">
+                            <i class="bx bx-search fs-4 lh-0"></i>
+                            <input type="text" name="search" class="form-control border-1 shadow-none" placeholder="Tìm kiếm theo mã đơn..." aria-label="Search..." />
+
+                            <select name="status" class="form-control ms-2" aria-label="Trạng thái">
+                                <option value="">Tất cả trạng thái</option>
+                                <option value="Chờ Xác Nhận">Chờ Xác Nhận</option>
+                                <option value="Chờ Giao Hàng">Chờ Giao Hàng</option>
+                                <option value="Đang Vận Chuyển">Đang Vận Chuyển</option>
+                                <option value="Đã Giao Hàng">Đã Giao Hàng</option>
+                                <option value="Hoàn Thành">Hoàn Thành</option>
+                                <option value="Đã Hủy">Đã Hủy</option>
+                            </select>
+
+                            <button type="submit" title="Search" class="btn btn-success ms-2">Tìm</button>
+                        </form>
+                        <a asp-action="Create" class="btn btn-primary ms-2">Tạo mới</a>
+                    </div>
+                    <br>
+
+                    <div class="mb-3">
+                        @if (ViewBag.Statuses != null)
+                        {
+                            // "Show All" button
+                            <a href="@Url.Action("Index", new { status = "", page = Model.PageNumber })" class="btn btn-secondary ms-1">Hiển Thị Tất Cả</a>
+
+                            foreach (var status in ViewBag.Statuses)
+                            {
+                                var isActive = status == ViewBag.CurrentStatus ? "active" : "";
+                                <a href="@Url.Action("Index", new { status = status, page = Model.PageNumber })" class="btn btn-secondary ms-1 @isActive">@status</a>
+                            }
+                        }
+                    </div>
+
+                    <div class="panel-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Mã</th>
+                                    <th>Tổng SP</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Tên Khách Hàng</th>
+                                    <th>Ngày Tạo</th>
+                                    <th>Loại Hóa Đơn</th>
+                                    <th>Trạng Thái</th>
+                                    <th>Hành Động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    int stt = (Model.PageNumber - 1) * Model.PageSize + 1;
+                                    foreach (var item in Model)
+                                    {
+                                        <tr style="border-bottom: 1px solid #dee2e6;">
+                                            <td>@stt</td>
+                                            <td>@item.HoaDon.MaDon</td> 
+                                            <td>@item.TotalQuantity</td> 
+                                            <td>@item.HoaDon.TongTienHoaDon.ToString("N0")</td>
+                                            <td>@item.HoaDon.NguoiNhan</td>
+                                            <td>@item.HoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm:ss")</td>
+                                            <td>@item.HoaDon.LoaiHoaDon</td>
+                                            <td>@item.HoaDon.TrangThai</td>
+                                            <td>
+                                                <a asp-action="Edit" asp-route-id="@item.HoaDon.IdHoaDon" title="Edit">
+                                                    <i class="fa-solid fa-pen"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="9">Không có dữ liệu để hiển thị.</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="pagination">
+                        @Html.PagedListPager(Model, page => Url.Action("Index", "HoaDon", new { Page = page }),
+                                 new PagedListRenderOptions
+                        {
+                            DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                            DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                            DisplayLinkToPreviousPage = PagedListDisplayMode.Always,
+                            DisplayLinkToNextPage = PagedListDisplayMode.Always,
+                            MaximumPageNumbersToDisplay = 5,
+                            LiElementClasses = new[] { "page-item" },
+                            PageClasses = new[] { "page-link" }
+                        })
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

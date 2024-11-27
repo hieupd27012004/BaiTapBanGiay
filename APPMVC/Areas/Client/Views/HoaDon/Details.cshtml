@@ -1,0 +1,147 @@
+﻿@model AppData.ViewModel.HoaDonCTViewModel
+
+@{
+    ViewData["Title"] = "Chi Tiết Hóa Đơn";
+    Layout = "~/Areas/Client/Views/Shared/_Tttk.cshtml";
+}
+<style>
+    .timeline {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .timeline-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 20%;
+    }
+
+    .timeline-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #FF9F55;
+        margin-bottom: 10px;
+    }
+
+        .timeline-icon img {
+            max-width: 30px;
+            max-height: 30px;
+        }
+
+    .timeline-content {
+        text-align: center;
+    }
+
+        .timeline-content h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content p {
+            font-size: 14px;
+            color: #666;
+        }
+</style>
+<h4>Lịch sử đơn hàng</h4>
+<div class="timeline">
+    @foreach (var item in Model.LichSuHoaDon)
+    {
+        <div class="timeline-item">
+            <div class="timeline-icon">
+                @switch (item.ThaoTac)
+                {
+                    case "Xác nhận đơn hàng":
+                        <img src="https://i.imgur.com/9nnc9Et.png" alt="Chờ xác nhận">
+                        break;
+                    case "Giao hàng":
+                        <img src="https://i.imgur.com/YDG6lJV.png" alt="Chờ giao hàng">
+                        break;
+                    case "Đang vận chuyển":
+                        <img src="https://i.imgur.com/u6RFPvl.png" alt="Đang vận chuyển">
+                        break;
+                    case "Đã giao hàng":
+                        <img src="https://i.imgur.com/QiJCfpD.png" alt="Đã giao hàng">
+                        break;
+                    case "Hoàn thành":
+                        <img src="https://i.imgur.com/c8R1A8R.png" alt="Hoàn thành">
+                        break;
+                    default:
+                        <img src="https://i.imgur.com/9nnc9Et.png" alt="Chờ xác nhận">
+                        break;
+                }
+            </div>
+            <div class="timeline-content">
+                <h3>@item.ThaoTac</h3>
+                <p>@item.NgayTao.ToString("dd-MM-yyyy HH:mm:ss")</p>
+            </div>
+        </div>
+    }
+</div>
+
+<h1>Chi Tiết Hóa Đơn</h1>
+
+<div>
+    <h4>Thông Tin Hóa Đơn Chi Tiết</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">ID Hóa Đơn Chi Tiết</dt>
+        <dd class="col-sm-10">@Model.HoaDonChiTiet.IdHoaDonChiTiet</dd>
+
+        <dt class="col-sm-2">Đơn Giá</dt>
+        <dd class="col-sm-10">@Model.HoaDonChiTiet.DonGia</dd>
+
+        <dt class="col-sm-2">Số Lượng</dt>
+        <dd class="col-sm-10">@Model.HoaDonChiTiet.SoLuong</dd>
+
+        <dt class="col-sm-2">Tổng Tiền</dt>
+        <dd class="col-sm-10">@Model.HoaDonChiTiet.TongTien</dd>
+
+        <dt class="col-sm-2">Kích Hoạt</dt>
+        <dd class="col-sm-10">@Model.HoaDonChiTiet.KichHoat</dd>
+    </dl>
+
+
+    <h4>Thông Tin Sản Phẩm Chi Tiết</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">ID Sản Phẩm Chi Tiết</dt>
+        <dd class="col-sm-10">@Model.SanPhamChiTiet.IdSanPhamChiTiet</dd>
+
+        <dt class="col-sm-2">Giá</dt>
+        <dd class="col-sm-10">@Model.SanPhamChiTiet.Gia</dd>
+
+        <dt class="col-sm-2">Số Lượng</dt>
+        <dd class="col-sm-10">@Model.SanPhamChiTiet.SoLuong</dd>
+
+        <dt class="col-sm-2">Xuất Xứ</dt>
+        <dd class="col-sm-10">@Model.SanPhamChiTiet.XuatXu</dd>
+
+        <dt class="col-sm-2">Ngày Cập Nhật</dt>
+        <dd class="col-sm-10">@Model.SanPhamChiTiet.NgayCapNhat.ToString("yyyy-MM-dd")</dd>
+    </dl>
+
+    <h4>Thông Tin Khách Hàng</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Họ Tên</dt>
+        <dd class="col-sm-10">@Model.KhachHang.HoTen</dd>
+
+        <dt class="col-sm-2">Số Điện Thoại</dt>
+        <dd class="col-sm-10">@Model.KhachHang.SoDienThoai</dd>
+
+        <dt class="col-sm-2">Email</dt>
+        <dd class="col-sm-10">@Model.KhachHang.Email</dd>
+
+        <dt class="col-sm-2">Địa Chỉ</dt>
+@*         <dd class="col-sm-10">@Model.KhachHang.DiaChi</dd> *@
+    </dl>
+</div>
+
+<a asp-action="Index" class="btn btn-primary">Quay lại danh sách</a>

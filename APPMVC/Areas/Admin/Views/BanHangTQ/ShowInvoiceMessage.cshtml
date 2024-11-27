@@ -1,0 +1,26 @@
+﻿@{
+    ViewData["Title"] = "Thông Báo";
+}
+
+<h2>Thông Báo</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+        <button id="printButton" onclick="openInvoice()">In Hóa Đơn</button>
+    </div>
+}
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<script>
+    function openInvoice() {
+        const fileUrl = '@TempData["FileUrl"]'; // Lấy URL của file PDF
+        window.open(fileUrl, '_blank'); // Mở file PDF trong tab mới
+    }
+</script>

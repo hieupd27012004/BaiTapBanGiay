@@ -1,0 +1,168 @@
+﻿@model AppData.Model.Voucher
+
+@{
+    ViewData["Title"] = "Create Voucher";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="post" id="createVoucherForm">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="MaVoucher" class="control-label">Mã Voucher</label>
+                <input asp-for="MaVoucher" class="form-control" />
+                <span asp-validation-for="MaVoucher" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="MoTaVoucher" class="control-label">Mô Tả</label>
+                <input asp-for="MoTaVoucher" class="form-control" />
+                <span asp-validation-for="MoTaVoucher" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LoaiGiamGia" class="control-label">Loại Giảm Giá</label>
+                <select asp-for="LoaiGiamGia" class="form-control" id="LoaiGiamGia">
+                    <option value="1">Theo % sản phẩm</option>
+                    <option value="2">Theo số tiền</option>
+                </select>
+                <span asp-validation-for="LoaiGiamGia" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GiaTriGiam" class="control-label">Giá Trị Giảm</label>
+                <div class="input-container">
+                    <input asp-for="GiaTriGiam" class="form-control" id="GiaTriGiam" type="text" />
+                    <label class="input-unit" id="GiaTriGiamUnit">%</label>
+                </div>
+                <span asp-validation-for="GiaTriGiam" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="GiaTriDonHangToiThieu" class="control-label">Giá Trị Đơn Hàng Tối Thiểu</label>
+                <div class="input-container">
+                    <input asp-for="GiaTriDonHangToiThieu" class="form-control" type="text" />
+                    <label class="input-unit">VNĐ</label>
+                </div>
+                <span asp-validation-for="GiaTriDonHangToiThieu" class="text-danger"></span>
+            </div>
+            <div class="form-group" id="SoTienToiDaContainer" class="hidden">
+                <label asp-for="SoTienToiDa" class="control-label">Số Tiền Giảm Tối Đa</label>
+                <div class="input-container">
+                    <input asp-for="SoTienToiDa" class="form-control" type="text" />
+                    <label class="input-unit">VNĐ</label>
+                </div>
+                <span asp-validation-for="SoTienToiDa" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayBatDau" class="control-label">Ngày Bắt Đầu</label>
+                <input asp-for="NgayBatDau" class="form-control" id="NgayBatDau" />
+                <span asp-validation-for="NgayBatDau" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NgayKetThuc" class="control-label">Ngày Kết Thúc</label>
+                <input asp-for="NgayKetThuc" class="form-control" id="NgayKetThuc" />
+                <span asp-validation-for="NgayKetThuc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TongSoLuongVoucher" class="control-label">Tổng Số Lượng Voucher</label>
+                <input asp-for="TongSoLuongVoucher" class="form-control" />
+                <span asp-validation-for="TongSoLuongVoucher " class="text-danger"></span>
+            </div>
+
+            <input type="hidden" asp-for="NguoiTao" value="Admin" />
+            <input type="hidden" asp-for="TrangThai" value="1" /> <!-- Ho ặc giá trị trạng thái mặc định khác -->
+
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+<script>
+    $(document).ready(function () {
+        var selectedValue = $('#LoaiGiamGia').val();
+        if (selectedValue == 1) {
+            $('#SoTienToiDaContainer').removeClass('hidden');
+            $('#GiaTriGiamUnit').text('%');
+        } else {
+            $('#SoTienToiDaContainer').addClass('hidden');
+            $('#GiaTriGiamUnit').text('VNĐ');
+        }
+
+        $('#LoaiGiamGia').on('change', function () {
+            var selectedValue = $(this).val();
+            if (selectedValue == 1) {
+                $('#SoTienToiDaContainer').removeClass('hidden');
+                $('#GiaTriGiamUnit').text('%');
+                $('#SoTienToiDaContainer').slideDown(500);
+            } else {
+                $('#SoTienToiDaContainer').slideUp(500, function () {
+                    $(this).addClass('hidden');
+                });
+                $('#GiaTriGiamUnit').text('VNĐ');
+            }
+        });
+        function formatNumber(n) {
+            return n.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+        function removeFormatting(value) {
+            return value.replace(/\./g, "");
+        }
+
+        $('#GiaTriGiam, #GiaTriDonHangToiThieu, #SoTienToiDa').on('input', function () {
+            var value = $(this).val();
+            $(this).val(formatNumber(value));
+        });
+
+        $('form').on('submit', function () {
+            $('#GiaTriGiam').val(removeFormatting($('#GiaTriGiam').val()));
+            $('#GiaTriDonHangToiThieu').val(removeFormatting($('#GiaTriDonHangToiThieu').val()));
+            $('#SoTienToiDa').val(removeFormatting($('#SoTienToiDa').val()));
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        var now = new Date();
+
+        var gmtPlus7Offset = 7 * 60 * 60 * 1000;
+        var nowInGmtPlus7 = new Date(now.getTime() + gmtPlus7Offset);
+
+        var ngayBatDau = new Date(nowInGmtPlus7.getTime() + 1 * 60 * 60 * 1000);
+        document.getElementById("NgayBatDau").value = ngayBatDau.toISOString().slice(0, 16); // Định dạng YYYY-MM-DDTHH:mm
+
+        var ngayKetThuc = new Date(ngayBatDau.getTime() + 1 * 60 * 60 * 1000);
+        document.getElementById("NgayKetThuc").value = ngayKetThuc.toISOString().slice(0, 16); // Định dạng YYYY-MM-DDTHH:mm
+    });
+</script>
+
+<style>
+    .input-container {
+        position: relative;
+    }
+
+    .input-unit {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 16px;
+        color: #999;
+    }
+
+    .hidden {
+        display: none;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+        .hidden.show {
+            display: block;
+            opacity: 1;
+        }
+</style>
